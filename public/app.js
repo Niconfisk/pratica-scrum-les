@@ -83,6 +83,30 @@ class TaskManager {
         }
     }
 
+    async editarTarefa(id) {
+        const index = this.tarefas.findIndex(t => t.id === id);
+        if (index === -1) return;
+
+        const tarefa = this.tarefas[index];
+        const novoTitulo = prompt('Edite o título da tarefa:', tarefa.titulo);
+        
+        if (novoTitulo !== null && novoTitulo.trim() !== '') {
+            tarefa.titulo = novoTitulo.trim();
+            try {
+                const response = await fetch(`${this.apiUrl}/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tarefa)
+                });
+                if (response.ok) {
+                    this.renderizar();
+                }
+            } catch (error) {
+                console.error('Erro ao editar tarefa:', error);
+            }
+        }
+    }
+
     renderizar() {
         const quadro = document.getElementById('quadro-tarefas');
         quadro.innerHTML = '';
