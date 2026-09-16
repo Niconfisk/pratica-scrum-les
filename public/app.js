@@ -46,6 +46,27 @@ class TaskManager {
         }
     }
 
+    async concluirTarefa(id) {
+        const index = this.tarefas.findIndex(t => t.id === id);
+        if (index === -1) return;
+        
+        const tarefa = this.tarefas[index];
+        tarefa.status = tarefa.status === 'Feita' ? 'A Fazer' : 'Feita';
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(tarefa)
+            });
+            if (response.ok) {
+                this.renderizar();
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar tarefa:', error);
+        }
+    }
+
     renderizar() {
         const quadro = document.getElementById('quadro-tarefas');
         quadro.innerHTML = '';
@@ -58,7 +79,30 @@ class TaskManager {
             tituloSpan.className = 'tarefa-titulo';
             tituloSpan.textContent = tarefa.titulo;
             
+            const acoesDiv = document.createElement('div');
+            acoesDiv.className = 'tarefa-acoes';
+
+            const btnConcluir = document.createElement('button');
+            btnConcluir.className = 'btn-concluir';
+            btnConcluir.textContent = tarefa.status === 'Feita' ? 'Desfazer' : 'Concluir';
+            btnConcluir.onclick = () => this.concluirTarefa(tarefa.id);
+
+            const btnEditar = document.createElement('button');
+            btnEditar.className = 'btn-editar';
+            btnEditar.textContent = 'Editar';
+            btnEditar.onclick = () => this.editarTarefa(tarefa.id);
+
+            const btnExcluir = document.createElement('button');
+            btnExcluir.className = 'btn-excluir';
+            btnExcluir.textContent = 'Excluir';
+            btnExcluir.onclick = () => this.excluirTarefa(tarefa.id);
+
+            acoesDiv.appendChild(btnConcluir);
+            acoesDiv.appendChild(btnEditar);
+            acoesDiv.appendChild(btnExcluir);
+
             div.appendChild(tituloSpan);
+            div.appendChild(acoesDiv);
             quadro.appendChild(div);
         });
     }
