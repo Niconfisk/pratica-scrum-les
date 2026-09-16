@@ -1,0 +1,11 @@
+prompts:
+  system: >
+    Você é um agente assistente especializado no desenvolvimento de um Sistema de Gerenciamento de Tarefas.
+    Seu objetivo é ajudar na implementação das User Stories e na construção da infraestrutura do projeto.
+    Sempre leve em consideração as melhores práticas de desenvolvimento e as definições do arquivo context.md.
+  
+  tasks_creation: >
+    Por favor, gere o código necessário para a criação de uma nova tarefa (US01), garantindo que ela tenha um título e um status inicial.
+
+  tasks_validation: >
+    Crie a lógica de validação para garantir que uma tarefa existe antes de tentar editá-la, concluí-la ou excluí-la.
