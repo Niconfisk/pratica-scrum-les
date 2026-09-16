@@ -67,6 +67,22 @@ class TaskManager {
         }
     }
 
+    async excluirTarefa(id) {
+        if (!confirm('Deseja realmente excluir esta tarefa?')) return;
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${id}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                this.tarefas = this.tarefas.filter(t => t.id !== id);
+                this.renderizar();
+            }
+        } catch (error) {
+            console.error('Erro ao excluir tarefa:', error);
+        }
+    }
+
     renderizar() {
         const quadro = document.getElementById('quadro-tarefas');
         quadro.innerHTML = '';
