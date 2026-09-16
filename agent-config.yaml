@@ -1,0 +1,12 @@
+agent:
+  name: "TaskMaster-AI"
+  version: "1.0.0"
+  model: "gpt-4"
+  temperature: 0.7
+  max_tokens: 1500
+  context_file: "context.md"
+  prompts_file: "prompts.yaml"
+  capabilities:
+    - "code_generation"
+    - "code_review"
+    - "infrastructure_setup"
