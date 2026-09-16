@@ -13,7 +13,15 @@ class TaskManager {
     }
 
     async carregarTarefas() {
-        // Will implement in Issue #2
+        try {
+            const response = await fetch(this.apiUrl);
+            if (response.ok) {
+                this.tarefas = await response.json();
+                this.renderizar();
+            }
+        } catch (error) {
+            console.error('Erro ao carregar tarefas:', error);
+        }
     }
 
     async adicionarTarefa(titulo) {
@@ -63,3 +71,4 @@ document.getElementById('btn-adicionar').addEventListener('click', () => {
     manager.adicionarTarefa(input.value);
     input.value = '';
 });
+manager.carregarTarefas();
