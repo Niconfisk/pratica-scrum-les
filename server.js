@@ -44,11 +44,11 @@ app.put('/api/tarefas/:id', (req, res) => {
     const data = readData();
     const index = data.findIndex(t => t.id === req.params.id);
     if (index !== -1) {
-        data[index] = req.body;
+        data[index] = { ...data[index], ...req.body, id: req.params.id };
         writeData(data);
         res.json(data[index]);
     } else {
-        res.status(404).send('Tarefa não encontrada');
+        res.status(404).json({ error: 'Tarefa não encontrada' });
     }
 });
 
@@ -61,10 +61,14 @@ app.delete('/api/tarefas/:id', (req, res) => {
         writeData(data);
         res.status(204).send();
     } else {
-        res.status(404).send('Tarefa não encontrada');
+        res.status(404).json({ error: 'Tarefa não encontrada' });
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Servidor rodando em http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
