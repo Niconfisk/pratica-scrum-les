@@ -46,12 +46,33 @@ class TaskManager {
         }
     }
 
+    async comecarTarefa(id) {
+        const index = this.tarefas.findIndex(t => t.id === id);
+        if (index === -1) return;
+        
+        const tarefa = this.tarefas[index];
+        tarefa.status = 'Fazendo';
+
+        try {
+            const response = await fetch(`${this.apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(tarefa)
+            });
+            if (response.ok) {
+                this.renderizar();
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar tarefa:', error);
+        }
+    }
+
     async concluirTarefa(id) {
         const index = this.tarefas.findIndex(t => t.id === id);
         if (index === -1) return;
         
         const tarefa = this.tarefas[index];
-        tarefa.status = tarefa.status === 'Feita' ? 'A Fazer' : 'Feita';
+        tarefa.status = 'Feita';
 
         try {
             const response = await fetch(`${this.apiUrl}/${id}`, {
@@ -108,42 +129,62 @@ class TaskManager {
     }
 
     renderizar() {
-        const quadro = document.getElementById('quadro-tarefas');
-        quadro.innerHTML = '';
+        document.getElementById('col-a-fazer').innerHTML = '';
+        document.getElementById('col-fazendo').innerHTML = '';
+        document.getElementById('col-feita').innerHTML = '';
 
         this.tarefas.forEach(tarefa => {
             const div = document.createElement('div');
-            div.className = `tarefa ${tarefa.status === 'Feita' ? 'feita' : ''}`;
+            div.className = 'card mb-2 shadow-sm';
             
+            const cardBody = document.createElement('div');
+            cardBody.className = 'card-body p-2 d-flex justify-content-between align-items-center';
+
             const tituloSpan = document.createElement('span');
-            tituloSpan.className = 'tarefa-titulo';
+            tituloSpan.className = `tarefa-titulo ${tarefa.status === 'Feita' ? 'text-decoration-line-through text-muted' : ''}`;
             tituloSpan.textContent = tarefa.titulo;
             
             const acoesDiv = document.createElement('div');
-            acoesDiv.className = 'tarefa-acoes';
+            acoesDiv.className = 'btn-group btn-group-sm';
 
-            const btnConcluir = document.createElement('button');
-            btnConcluir.className = 'btn-concluir';
-            btnConcluir.textContent = tarefa.status === 'Feita' ? 'Desfazer' : 'Concluir';
-            btnConcluir.onclick = () => this.concluirTarefa(tarefa.id);
+            if (tarefa.status === 'A Fazer') {
+                const btnComecar = document.createElement('button');
+                btnComecar.className = 'btn btn-outline-primary';
+                btnComecar.textContent = 'Começar';
+                btnComecar.onclick = () => this.comecarTarefa(tarefa.id);
+                acoesDiv.appendChild(btnComecar);
+            } else if (tarefa.status === 'Fazendo') {
+                const btnConcluir = document.createElement('button');
+                btnConcluir.className = 'btn btn-outline-success';
+                btnConcluir.textContent = 'Concluir';
+                btnConcluir.onclick = () => this.concluirTarefa(tarefa.id);
+                acoesDiv.appendChild(btnConcluir);
+            }
 
             const btnEditar = document.createElement('button');
-            btnEditar.className = 'btn-editar';
-            btnEditar.textContent = 'Editar';
+            btnEditar.className = 'btn btn-outline-warning';
+            btnEditar.textContent = '✎';
             btnEditar.onclick = () => this.editarTarefa(tarefa.id);
 
             const btnExcluir = document.createElement('button');
-            btnExcluir.className = 'btn-excluir';
-            btnExcluir.textContent = 'Excluir';
+            btnExcluir.className = 'btn btn-outline-danger';
+            btnExcluir.textContent = '✖';
             btnExcluir.onclick = () => this.excluirTarefa(tarefa.id);
 
-            acoesDiv.appendChild(btnConcluir);
             acoesDiv.appendChild(btnEditar);
             acoesDiv.appendChild(btnExcluir);
 
-            div.appendChild(tituloSpan);
-            div.appendChild(acoesDiv);
-            quadro.appendChild(div);
+            cardBody.appendChild(tituloSpan);
+            cardBody.appendChild(acoesDiv);
+            div.appendChild(cardBody);
+
+            if (tarefa.status === 'A Fazer') {
+                document.getElementById('col-a-fazer').appendChild(div);
+            } else if (tarefa.status === 'Fazendo') {
+                document.getElementById('col-fazendo').appendChild(div);
+            } else {
+                document.getElementById('col-feita').appendChild(div);
+            }
         });
     }
 }
