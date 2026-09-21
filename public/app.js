@@ -135,7 +135,7 @@ class TaskManager {
 
         this.tarefas.forEach(tarefa => {
             const div = document.createElement('div');
-            div.className = 'card mb-2 shadow-sm';
+            div.className = 'card mb-3 shadow-sm task-card';
             
             const cardBody = document.createElement('div');
             cardBody.className = 'card-body p-2 d-flex justify-content-between align-items-center';

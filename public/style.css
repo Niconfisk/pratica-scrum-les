@@ -1,94 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
     margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
+    padding: 20px 0;
+    color: #333;
 }
 
 .container {
-    width: 100%;
-    max-width: 600px;
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    max-width: 1000px;
 }
 
 h1 {
-    text-align: center;
-    color: #333;
+    font-weight: 700;
+    color: #2c3e50;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
 }
 
-.add-task-container {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+.card.bg-light {
+    background: rgba(248, 249, 250, 0.6) !important;
+    border: 1px solid rgba(0,0,0,0.05);
+    border-radius: 12px;
 }
 
-#nova-tarefa-titulo {
-    flex: 1;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.card-header {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.task-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    background: #ffffff;
+}
+
+.task-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn:active {
+    transform: scale(0.95);
+}
+
+.btn-group .btn {
+    margin-left: 4px;
 }
 
 #btn-adicionar {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
-    border-radius: 4px;
-    cursor: pointer;
+    font-weight: 600;
 }
 
 #btn-adicionar:hover {
-    background-color: #0056b3;
+    box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+    opacity: 0.9;
 }
 
-.tarefa {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    background-color: #fafafa;
+#nova-tarefa-titulo {
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #ced4da;
 }
 
-.tarefa.feita {
-    background-color: #e6ffed;
-    border-color: #b7ebc5;
-}
-
-.tarefa.feita .tarefa-titulo {
-    text-decoration: line-through;
-    color: #666;
-}
-
-.tarefa-acoes button {
-    margin-left: 5px;
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-concluir {
-    background-color: #28a745;
-    color: white;
-}
-
-.btn-editar {
-    background-color: #ffc107;
-    color: #333;
-}
-
-.btn-excluir {
-    background-color: #dc3545;
-    color: white;
+#btn-adicionar {
+    border-radius: 0 8px 8px 0;
 }
