@@ -129,19 +129,40 @@ class TaskManager {
     }
 
     renderizar() {
-        document.getElementById('col-a-fazer').innerHTML = '';
-        document.getElementById('col-fazendo').innerHTML = '';
-        document.getElementById('col-feita').innerHTML = '';
+        const colunas = ['col-a-fazer', 'col-fazendo', 'col-feita'];
+        colunas.forEach(id => {
+            const col = document.getElementById(id);
+            col.innerHTML = '';
+            col.classList.remove('drag-over');
+        });
 
         this.tarefas.forEach(tarefa => {
             const div = document.createElement('div');
             div.className = 'card mb-3 shadow-sm task-card';
-            
+            div.draggable = true;
+            div.dataset.id = tarefa.id;
+
+            // Drag events
+            div.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', tarefa.id);
+                div.classList.add('dragging');
+                setTimeout(() => div.classList.add('dragging-ghost'), 0);
+            });
+            div.addEventListener('dragend', () => {
+                div.classList.remove('dragging', 'dragging-ghost');
+                document.querySelectorAll('.drop-zone').forEach(z => z.classList.remove('drag-over'));
+            });
+
             const cardBody = document.createElement('div');
             cardBody.className = 'card-body p-2 d-flex justify-content-between align-items-center';
 
+            const dragHandle = document.createElement('span');
+            dragHandle.className = 'drag-handle me-2';
+            dragHandle.innerHTML = '⠿';
+            dragHandle.title = 'Arrastar';
+
             const tituloSpan = document.createElement('span');
-            tituloSpan.className = `tarefa-titulo ${tarefa.status === 'Feita' ? 'text-decoration-line-through text-muted' : ''}`;
+            tituloSpan.className = `tarefa-titulo flex-grow-1 ${tarefa.status === 'Feita' ? 'text-decoration-line-through text-muted' : ''}`;
             tituloSpan.textContent = tarefa.titulo;
             
             const acoesDiv = document.createElement('div');
@@ -174,6 +195,7 @@ class TaskManager {
             acoesDiv.appendChild(btnEditar);
             acoesDiv.appendChild(btnExcluir);
 
+            cardBody.appendChild(dragHandle);
             cardBody.appendChild(tituloSpan);
             cardBody.appendChild(acoesDiv);
             div.appendChild(cardBody);
@@ -185,6 +207,54 @@ class TaskManager {
             } else {
                 document.getElementById('col-feita').appendChild(div);
             }
+        });
+
+        this._configurarDropZones();
+    }
+
+    _configurarDropZones() {
+        const mapa = {
+            'col-a-fazer': 'A Fazer',
+            'col-fazendo': 'Fazendo',
+            'col-feita': 'Feita'
+        };
+
+        Object.entries(mapa).forEach(([colId, novoStatus]) => {
+            const col = document.getElementById(colId);
+            col.classList.add('drop-zone');
+
+            col.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                col.classList.add('drag-over');
+            });
+
+            col.addEventListener('dragleave', (e) => {
+                if (!col.contains(e.relatedTarget)) {
+                    col.classList.remove('drag-over');
+                }
+            });
+
+            col.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                col.classList.remove('drag-over');
+                const id = e.dataTransfer.getData('text/plain');
+                const tarefa = this.tarefas.find(t => t.id === id);
+                if (!tarefa || tarefa.status === novoStatus) return;
+
+                tarefa.status = novoStatus;
+                try {
+                    const response = await fetch(`${this.apiUrl}/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(tarefa)
+                    });
+                    if (response.ok) {
+                        this.renderizar();
+                    }
+                } catch (error) {
+                    console.error('Erro ao mover tarefa:', error);
+                }
+            });
         });
     }
 }
